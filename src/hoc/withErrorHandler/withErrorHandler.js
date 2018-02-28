@@ -28,16 +28,24 @@ const withErrorHandler = (WrappedComponent, axios) => {
       //For requests: If there is no error set the error to null. 
       //Only the first arguments is used. The second error argument is not used.
       //  Then return the request so the REST process can continue
-      axios.interceptors.request.use(req => {
+      this.reqInterceptor = axios.interceptors.request.use(req => {
         this.setState({error: null});
         return req;
       });
 
       //For response: If there is an error set it to the state
       //  res => res will return the response object so the REST process can continue
-      axios.interceptors.response.use(res => res, error => {
+      this.resInterceptor = axios.interceptors.response.use(res => res, error => {
         this.setState({error: error});
       });
+    }
+
+    //Prevent memory leaks by cleaning up interceptors.
+    //  This is crucial for reusable HOC's because each use will retain these interceptors to thos instances.
+    componentWillUnmount () {
+      // console.log('[withErrorHandler] WillUnmount', this.reqInterceptor, this.resInterceptor);
+      axios.interceptors.request.eject(this.reqInterceptor);
+      axios.interceptors.response.eject(this.resInterceptor);
     }
 
     errorConfirmedHandler = () => {
