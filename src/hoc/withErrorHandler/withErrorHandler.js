@@ -18,6 +18,8 @@ const withErrorHandler = (WrappedComponent, axios) => {
       error: null
     }
 
+    //componentWillMount LC method is used here because compoentDidMount will not run until the child WrappedComponent 
+    // is rendered. By then it will be too late in the process to add the interceptor for responses.
     componentWillMount () {
       //For both the request and response interceptors the params are req/response as the first args.
       // The second argument is the error object.
