@@ -17,7 +17,7 @@ const INGREDIENT_PRICES = {
 
 class BurgerBuilder extends Component {
   state = {
-    ingredients: null,
+    ingredients: {salad: 0, bacon: 0, cheese: 0, meat: 0},
     totalPrice: 4,
     purchasable: false,
     purchasing: false,
@@ -25,10 +25,27 @@ class BurgerBuilder extends Component {
     error: false
   }
 
+  /*
+  Define ingredients above anyway so that we an set an order to the ingredients here
+   instead of having Firebase keys dictate it through its own alphanumeric sort.
+  Loop through the firebase return and match to the ingredients here
+  */
+
+  sortIngredients (dbIngredients) {
+    const sortedIngredients = Object.assign({}, this.state.ingredients);
+
+    for (let i in sortedIngredients) {
+      sortedIngredients[i] = dbIngredients[i]
+    }
+
+    this.setState({ingredients: sortedIngredients});
+  }
+
   componentDidMount () {
     axios.get('https://react16-burgerproject.firebaseio.com/ingredients.json')
       .then(response => {
-        this.setState({ingredients: response.data})
+        // this.setState({ingredients: response.data})
+        this.sortIngredients(response.data);
       })
       .catch(error => {
         this.setState({error: true});
@@ -85,32 +102,43 @@ class BurgerBuilder extends Component {
 
   purchaseContinueHandler = () => {
     // alert('You continue!');
-    this.setState({loading: true});
+    // this.setState({loading: true});
 
-    const order = {
-      ingredients: this.state.ingredients,
-      price: this.state.totalPrice,
-      customer: {
-        name: 'Ray Templo',
-        address: {
-          street: '1 Infinite Loop',
-          zipCode: '08857',
-          country: 'USA'
-        },
-        email: 'rtemplo@gmail.com',
-      },
-      deliveryMethod: 'fastest'
+    // const order = {
+    //   ingredients: this.state.ingredients,
+    //   price: this.state.totalPrice,
+    //   customer: {
+    //     name: 'Ray Templo',
+    //     address: {
+    //       street: '1 Infinite Loop',
+    //       zipCode: '08857',
+    //       country: 'USA'
+    //     },
+    //     email: 'rtemplo@gmail.com',
+    //   },
+    //   deliveryMethod: 'fastest'
+    // }
+
+    // //For the Firebase endpoint the .json extension is needed
+    // axios.post('/orders.json', order)
+    //   .then(response => {
+    //     this.setState({ loading: false, purchasing: false });
+    //   })
+    //   .catch(error => {
+    //     console.log(error);
+    //     this.setState({ loading: false, purchasing: false });
+    //   });
+
+    const queryParams = [];
+    for (let i in this.state.ingredients) {
+      queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
     }
+    const queryString = queryParams.join('&');
 
-    //For the Firebase endpoint the .json extension is needed
-    axios.post('/orders.json', order)
-      .then(response => {
-        this.setState({ loading: false, purchasing: false });
-      })
-      .catch(error => {
-        console.log(error);
-        this.setState({ loading: false, purchasing: false });
-      });
+    this.props.history.push({
+      pathname: '/checkout',
+      search: '?' + queryString
+    });
   }
 
   render() {
