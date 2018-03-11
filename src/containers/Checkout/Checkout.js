@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
+import { Route } from 'react-router-dom';
 import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSummary';
+import ContactData from './ContactData/ContactData';
 
 class Checkout extends Component {
   state = {
@@ -8,23 +10,22 @@ class Checkout extends Component {
       bacon: 0,
       cheese: 0,
       meat: 0
-    }
+    },
+    totalPrice: 0
   }
 
-  parseQueryParams () {
+  componentWillMount () {
     const search = this.props.location.search;
     const params = new URLSearchParams(search);
-    
+    let price = +params.get('price');
+
+    //this is done this way to maintain the order of the ingredients
     const ingredients = {...this.state.ingredients};
     for (let i in ingredients) {
       ingredients[i] = +params.get(i);
     }
 
-    this.setState({ingredients: ingredients});
-  }
-
-  componentDidMount () {
-    this.parseQueryParams();
+    this.setState({ingredients: ingredients, totalPrice: price});
   }
 
   checkoutCancelledHandler = () => {
@@ -43,6 +44,9 @@ class Checkout extends Component {
           checkoutCancelled={this.checkoutCancelledHandler}
           checkoutContinued={this.checkoutContinuedHandler}
           />
+        <Route 
+          path={this.props.match.path + '/contact-data'} 
+          render={(props) => (<ContactData ingredients={this.state.ingredients} price={this.state.totalPrice} {...props} />)} />
       </div>
     )
   }
