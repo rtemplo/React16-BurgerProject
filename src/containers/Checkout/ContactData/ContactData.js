@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import classes from './ContactData.css';
@@ -47,6 +48,7 @@ class ContactData extends Component {
             required: true,
             minLength: 5,
             maxLength: 5,
+            isNumeric: true,
             errorMessage: 'Please enter a valid 5 digit zip code.'
           },
           valid: false,
@@ -75,6 +77,7 @@ class ContactData extends Component {
           value: '',
           validation: {
             required: true,
+            isEmail: true,
             errorMessage: 'Please enter a valid email address.'
           },
           valid: false,
@@ -88,7 +91,7 @@ class ContactData extends Component {
               {value: 'cheapest', displayValue: 'Cheapest'},
             ]
           },
-          value: '',
+          value: 'fastest',
           validation: {},
           valid: true
         }
@@ -99,9 +102,10 @@ class ContactData extends Component {
 
   orderHandler = (event) => {
     event.preventDefault();
-    // console.log(this.props.ingredients);
 
-    // if (this.state.formIsValid)
+    // if (this.state.formIsValid) //this is not used because we formIsValid to 
+    //  disable the submit button instead. That has a better connection to the UI.
+
     this.setState({loading: true});
 
     const formData = {};
@@ -110,7 +114,7 @@ class ContactData extends Component {
     }
 
     const order = {
-      ingredients: this.props.ingredients,
+      ingredients: this.props.ings,
       price: this.props.price,
       orderData: formData
     }
@@ -141,6 +145,16 @@ class ContactData extends Component {
 
     if (rules.maxLength) {
       isValid = value.length <= rules.maxLength  && isValid;
+    }
+
+    if (rules.isEmail) {
+      const pattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+      isValid = pattern.test(value) && isValid;
+    }
+
+    if (rules.isNumeric) {
+      const pattern = /^\d+$/;
+      isValid = pattern.test(value) && isValid;
     }
 
     return isValid;
@@ -219,4 +233,11 @@ class ContactData extends Component {
   }
 }
 
-export default ContactData;
+const mapStateToProps = state => {
+  return {
+    ings: state.ingredients,
+    price: state.totalPrice
+  }
+}
+
+export default connect(mapStateToProps)(ContactData);

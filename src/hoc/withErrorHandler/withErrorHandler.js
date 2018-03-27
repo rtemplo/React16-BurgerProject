@@ -41,7 +41,7 @@ const withErrorHandler = (WrappedComponent, axios) => {
     }
 
     //Prevent memory leaks by cleaning up interceptors.
-    //  This is crucial for reusable HOC's because each use will retain these interceptors to thos instances.
+    //  This is crucial for reusable HOC's because each use will retain these interceptors to those instances.
     componentWillUnmount () {
       // console.log('[withErrorHandler] WillUnmount', this.reqInterceptor, this.resInterceptor);
       axios.interceptors.request.eject(this.reqInterceptor);

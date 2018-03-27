@@ -1,0 +1,2 @@
+export const ADD_INGREDIENT = 'ADD_INGREDIENTS';
+export const REM_INGREDIENT = 'REM_INGREDIENTS';
