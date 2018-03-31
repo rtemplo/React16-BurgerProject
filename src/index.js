@@ -11,24 +11,26 @@ import registerServiceWorker from './registerServiceWorker';
 
 import burgerBuilderReducer from './store/reducers/burgerBuilder';
 import orderReducer from './store/reducers/order';
+import authReducer from './store/reducers/auth';
 
 const rootReducer = combineReducers({
   burgerBuilder: burgerBuilderReducer, 
-  order: orderReducer
+  order: orderReducer,
+  auth: authReducer
 })
 
-const logger = store => next => action => {
-  console.log('[Middleware] Dispatching', action);
-  const result = next(action);
-  console.log('[Middleware] next state', store.getState());
-  return result;
-}
+// const logger = store => next => action => {
+//   console.log('[Middleware] Dispatching', action);
+//   const result = next(action);
+//   console.log('[Middleware] next state', store.getState());
+//   return result;
+// }
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;  
 
 const store = createStore(
   rootReducer,  
-  composeEnhancers(applyMiddleware(logger, thunk))
+  composeEnhancers(applyMiddleware(thunk))
 );
 
 const app = (
