@@ -5,10 +5,10 @@ import Button from '../../UI/Button/Button';
 class OrderSummary extends Component {
   //This is a class component for reference purposes of how it is NOT updated based on whether the modal is shown.
   // it could be a functional component otherwise.
-  componentWillUpdate () {
-    //this should not print if the modal is not shown
-    console.log('[OrderSummary] WillUpdate');
-  }
+  // componentWillUpdate () {
+  //   //this should not print if the modal is not shown
+  //   console.log('[OrderSummary] WillUpdate');
+  // }
 
   render () {
     const ingredientSummary = Object.keys(this.props.ingredients).map(igKey => {
