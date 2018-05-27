@@ -68,4 +68,7 @@ const mapDispatchToProps = dispatch => {
   }
 };
 
+//The withRouter here is required in order to propagate location changes that happen to the BrowserRouter component
+// that wraps the entire SPA. In this case the redux connect component breaks the continuity of propagation 
+// and withRouter restores it.
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
